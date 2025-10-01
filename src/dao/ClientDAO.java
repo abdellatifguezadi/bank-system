@@ -33,7 +33,8 @@ public class ClientDAO {
 
     public Client read(int id){
 
-        try(Connection conn = MyJDBC.getConnection();PreparedStatement  ps = conn.prepareStatement("SELECT * FROM Client WHERE id = ?")) {
+        try(Connection conn = MyJDBC.getConnection();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Client WHERE id = ?")) {
             ps.setInt(1,id);
             ResultSet resultSet = ps.executeQuery();
             if(resultSet.next()){
@@ -61,6 +62,19 @@ public class ClientDAO {
                 throw new RuntimeException(e);
             }
             return clients;
+    }
+
+    public void delete(int id){
+        try(Connection connection = MyJDBC.getConnection();
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM Client WHERE id = ?")) {
+            ps.setInt(1,id);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Erreur : client introuvable !");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

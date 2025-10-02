@@ -6,5 +6,8 @@ public final class CarteDebit extends Carte {
     public void setPlafondJournalier(double plafondJournalier) {
         this.plafondJournalier = plafondJournalier;
     }
+    public double getPlafondJournalier() {
+        return plafondJournalier;
+    }
 
 }

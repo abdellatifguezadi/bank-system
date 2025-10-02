@@ -35,4 +35,16 @@ public class ClientView {
 
 
     }
+
+    public void deleteClient(){
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.println("Entrer l'ID du client à supprimer:");
+            int id = Integer.parseInt(scanner.nextLine());
+            clientService.deleteClient(id);
+            System.out.println("Client supprimé avec succès !");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

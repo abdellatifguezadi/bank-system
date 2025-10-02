@@ -10,4 +10,5 @@ public final class CartePrepayee extends Carte {
     public void setSolde(double solde) {
         this.solde = solde;
     }
+
 }

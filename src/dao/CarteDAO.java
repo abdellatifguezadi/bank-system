@@ -7,16 +7,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CarteDAO {
 
-    public void create(Carte carte)  {
+    public void createCarte(Carte carte) {
         if (carte == null) {
             return;
         }
         try (Connection conn = MyJDBC.getConnection();
-             PreparedStatement check = conn.prepareStatement("SELECT id FROM Carte WHERE id=?");
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO Carte (id, numero, dateExpiration, statut, typeCarte, idClient, plafondJournalier, plafondMensuel, tauxInteret, soldeDisponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
+                PreparedStatement check = conn.prepareStatement("SELECT id FROM Carte WHERE id=?");
+                PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO Carte (id, numero, dateExpiration, statut, typeCarte, idClient, plafondJournalier, plafondMensuel, tauxInteret, soldeDisponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
             check.setInt(1, carte.getId());
             ResultSet rs = check.executeQuery();
             if (rs.next()) {
@@ -28,9 +28,8 @@ public class CarteDAO {
             ps.setString(4, carte.getStatut().name());
             ps.setString(5, carte.getClass().getSimpleName());
             ps.setInt(6, carte.getIdClient());
-            // Set type-specific fields
             if (carte instanceof CarteDebit debit) {
-               ps.setDouble(7, debit.getPlafondJournalier());
+                ps.setDouble(7, debit.getPlafondJournalier());
                 ps.setNull(8, Types.DOUBLE);
                 ps.setNull(9, Types.DOUBLE);
                 ps.setNull(10, Types.DOUBLE);
@@ -55,25 +54,32 @@ public class CarteDAO {
             System.out.println(e.getMessage());
         }
     }
-    
-    public Carte read(int id){
-        try(Connection connection = MyJDBC.getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT * FROM carte WHERE id=?")) {
-            statement.setInt(1,id);
+
+    public Carte readCarte(int id) {
+        try (Connection connection = MyJDBC.getConnection();
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM carte WHERE id=?")) {
+            statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 String typeCarte = resultSet.getString("typeCarte");
-                Carte carte ;
+                Carte carte;
                 switch (typeCarte) {
                     case "CarteDebit":
-                        carte = new CarteDebit();
+                        CarteDebit debit = new CarteDebit();
+                        debit.setPlafondJournalier(resultSet.getDouble("plafondJournalier"));
+                        carte = debit;
                         break;
                     case "CarteCredit":
-                        carte = new CarteCredit();
+                        CarteCredit credit = new CarteCredit();
+                        credit.setPlafondMensuel(resultSet.getDouble("plafondMensuel"));
+                        credit.setTeauxInteret(resultSet.getDouble("tauxInteret"));
+                        carte = credit;
                         break;
                     case "CartePrepayee":
-                        carte = new CartePrepayee();
+                        CartePrepayee prepayee = new CartePrepayee();
+                        prepayee.setSolde(resultSet.getDouble("soldeDisponible"));
+                        carte = prepayee;
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown carte type: " + typeCarte);
@@ -84,20 +90,22 @@ public class CarteDAO {
                 carte.setStatut(StatutCarte.valueOf(resultSet.getString("statut")));
                 carte.setIdClient(resultSet.getInt("idClient"));
                 return carte;
-            }else {
+            } else {
                 throw new SQLException("carte introuvable");
             }
-        } catch (SQLException e) { System.out.println(e.getMessage()); }
-       return null ;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
-
-    public void update(Carte carte){
-        try(Connection connection = MyJDBC.getConnection();
-        PreparedStatement statement = connection.prepareStatement("UPDATE Carte SET numero=?, dateExpiration=?, statut=?, typeCarte=?, idClient=?, plafondJournalier=?, plafondMensuel=?, tauxInteret=?, soldeDisponible=? WHERE id=?")) {
+    public void update(Carte carte) {
+        try (Connection connection = MyJDBC.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "UPDATE Carte SET numero=?, dateExpiration=?, statut=?, typeCarte=?, idClient=?, plafondJournalier=?, plafondMensuel=?, tauxInteret=?, soldeDisponible=? WHERE id=?")) {
             statement.setString(1, carte.getNumero());
-            statement.setDate(2,Date.valueOf(carte.getDateExpiration()));
-            statement.setString(3,carte.getStatut().name());
+            statement.setDate(2, Date.valueOf(carte.getDateExpiration()));
+            statement.setString(3, carte.getStatut().name());
             statement.setString(4, carte.getClass().getSimpleName());
             statement.setInt(5, carte.getIdClient());
             if (carte instanceof CarteDebit debit) {
@@ -133,22 +141,23 @@ public class CarteDAO {
         }
     }
 
-
-    public void delete(int id)  {
+    public void delete(int id) {
         try (Connection conn = MyJDBC.getConnection();
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM Carte WHERE id=?");) {
+                PreparedStatement ps = conn.prepareStatement("DELETE FROM Carte WHERE id=?");) {
             ps.setInt(1, id);
             int rows = ps.executeUpdate();
             if (rows == 0) {
                 throw new SQLException("Erreur : carte introuvable !");
             }
-        } catch (SQLException e) { System.out.println(e.getMessage()); }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public List<Carte> getByClient(int idClient) {
         List<Carte> cartes = new ArrayList<>();
         try (Connection conn = MyJDBC.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM Carte WHERE idClient=?");) {
+                PreparedStatement ps = conn.prepareStatement("SELECT * FROM Carte WHERE idClient=?");) {
             ps.setInt(1, idClient);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -156,13 +165,20 @@ public class CarteDAO {
                 Carte carte;
                 switch (typeCarte) {
                     case "CarteDebit":
-                        carte = new CarteDebit();
+                        CarteDebit debit = new CarteDebit();
+                        debit.setPlafondJournalier(rs.getDouble("plafondJournalier"));
+                        carte = debit;
                         break;
                     case "CarteCredit":
-                        carte = new CarteCredit();
+                        CarteCredit credit = new CarteCredit();
+                        credit.setPlafondMensuel(rs.getDouble("plafondMensuel"));
+                        credit.setTeauxInteret(rs.getDouble("tauxInteret"));
+                        carte = credit;
                         break;
                     case "CartePrepayee":
-                        carte = new CartePrepayee();
+                        CartePrepayee prepayee = new CartePrepayee();
+                        prepayee.setSolde(rs.getDouble("soldeDisponible"));
+                        carte = prepayee;
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown carte type: " + typeCarte);
@@ -174,27 +190,36 @@ public class CarteDAO {
                 carte.setIdClient(rs.getInt("idClient"));
                 cartes.add(carte);
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return cartes;
     }
 
     public List<Carte> getAll() {
         List<Carte> cartes = new ArrayList<>();
         try (Connection conn = MyJDBC.getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM Carte");) {
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery("SELECT * FROM Carte");) {
             while (rs.next()) {
                 String typeCarte = rs.getString("typeCarte");
                 Carte carte;
                 switch (typeCarte) {
                     case "CarteDebit":
-                        carte = new CarteDebit();
+                        CarteDebit debit = new CarteDebit();
+                        debit.setPlafondJournalier(rs.getDouble("plafondJournalier"));
+                        carte = debit;
                         break;
                     case "CarteCredit":
-                        carte = new CarteCredit();
+                        CarteCredit credit = new CarteCredit();
+                        credit.setPlafondMensuel(rs.getDouble("plafondMensuel"));
+                        credit.setTeauxInteret(rs.getDouble("tauxInteret"));
+                        carte = credit;
                         break;
                     case "CartePrepayee":
-                        carte = new CartePrepayee();
+                        CartePrepayee prepayee = new CartePrepayee();
+                        prepayee.setSolde(rs.getDouble("soldeDisponible"));
+                        carte = prepayee;
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown carte type: " + typeCarte);
@@ -206,7 +231,9 @@ public class CarteDAO {
                 carte.setIdClient(rs.getInt("idClient"));
                 cartes.add(carte);
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return cartes;
     }
 }

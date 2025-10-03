@@ -16,11 +16,11 @@ public class ClientService {
     }
 
     public void createClient(Client client) {
-        clientDAO.create(client);
+        clientDAO.createClient(client);
     }
 
     public Client findClientById(int id) {
-        Client client = clientDAO.read(id);
+        Client client = clientDAO.readClient(id);
         if ((client != null)) {
             return client;
         } else {
@@ -29,11 +29,11 @@ public class ClientService {
     }
 
     public List<Client> listerClients() {
-        return clientDAO.getAll();
+        return clientDAO.getAllClients();
     }
 
     public void deleteClient(int id) {
-        clientDAO.delete(id);
+        clientDAO.deleteClient(id);
     }
 
 

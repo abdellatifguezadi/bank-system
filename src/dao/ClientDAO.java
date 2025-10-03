@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ClientDAO {
 
-    public void create(Client client) {
+    public void createClient(Client client) {
         try(Connection connection = MyJDBC.getConnection();
             PreparedStatement check = connection.prepareStatement("SELECT id FROM Client WHERE id = ?");
             PreparedStatement ps = connection.prepareStatement("INSERT INTO Client (id, nom, email, telephone) VALUES (?, ?, ?, ?)")) {
@@ -31,7 +31,7 @@ public class ClientDAO {
     }
 
 
-    public Client read(int id){
+    public Client readClient(int id){
 
         try(Connection conn = MyJDBC.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM Client WHERE id = ?")) {
@@ -49,7 +49,7 @@ public class ClientDAO {
     }
 
 
-    public List<Client> getAll(){
+    public List<Client> getAllClients(){
             List<Client> clients = new ArrayList<>();
             try(Connection connection = MyJDBC.getConnection();
                 Statement statement = connection.createStatement();
@@ -64,7 +64,7 @@ public class ClientDAO {
             return clients;
     }
 
-    public void delete(int id){
+    public void deleteClient(int id){
         try(Connection connection = MyJDBC.getConnection();
             PreparedStatement ps = connection.prepareStatement("DELETE FROM Client WHERE id = ?")) {
             ps.setInt(1,id);

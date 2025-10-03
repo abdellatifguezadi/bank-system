@@ -3,6 +3,7 @@ package ui;
 import entity.OperationCarte;
 import entity.TypeOperation;
 import service.CarteService;
+import service.FraudeService;
 import service.OperationService;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class OperationView {
         this.scanner = new Scanner(System.in);
     }
 
-    public void faireOperation(OperationService operationService) {
+    public void faireOperation(OperationService operationService, FraudeService fraudeService) {
         System.out.print("ID carte : ");
         int idCarteOp = scanner.nextInt();
         scanner.nextLine();
@@ -26,9 +27,15 @@ public class OperationView {
         scanner.nextLine();
         TypeOperation typeOperation;
         switch (typeOp) {
-            case 1: typeOperation = TypeOperation.PAIEMENTENLIGNE; break;
-            case 2: typeOperation = TypeOperation.ACHAT; break;
-            case 3: typeOperation = TypeOperation.RETRAIT; break;
+            case 1:
+                typeOperation = TypeOperation.PAIEMENTENLIGNE;
+                break;
+            case 2:
+                typeOperation = TypeOperation.ACHAT;
+                break;
+            case 3:
+                typeOperation = TypeOperation.RETRAIT;
+                break;
             default:
                 System.out.println("Type d'opération invalide.");
                 return;
@@ -47,7 +54,9 @@ public class OperationView {
         String lieu = scanner.nextLine();
         OperationCarte operation = new OperationCarte(0, dateOp, montant, typeOperation, lieu, idCarteOp);
         operationService.enregistrerOperation(operation);
-        System.out.println("Opération enregistrée avec succès.");
-    }
-}
+        System.out.println(" Opération enregistrée avec succès.");
 
+        fraudeService.analyserUneOperation(operation);
+    }
+
+}

@@ -14,19 +14,47 @@ public class FraudeService {
         this.alerteDAO = alerteDAO;
     }
 
-    public List<AlerteFraude> analyserOperations(List<OperationCarte> operations) {
-        List<AlerteFraude> alertes = new ArrayList<>();
-        for (OperationCarte op : operations) {
-            if (op.montant() > 10000) {
-                AlerteFraude alerte = new AlerteFraude(op.id(), "Montant élevé", NiveauAlerte.CRITIQUE, op.idCarte());
-                alertes.add(alerte);
-                genererAlerte(alerte);
+    public void analyserUneOperation(OperationCarte operation) {
+        AlerteFraude alerte = null;
+
+        if (operation.montant() > 10000) {
+            alerte = new AlerteFraude(-1,
+                    "FRAUDE CRITIQUE - Montant très élevé: " + operation.montant() + " DH",
+                    NiveauAlerte.CRITIQUE,
+                    operation.idCarte());
+        } else if (operation.montant() > 5000) {
+            alerte = new AlerteFraude(-1,
+                    "Montant suspect: " + operation.montant() + " DH",
+                    NiveauAlerte.AVERTISSEMENT,
+                    operation.idCarte());
+        } else if (operation.montant() > 2000) {
+            alerte = new AlerteFraude(-1,
+                    "Surveillance: " + operation.montant() + " DH",
+                    NiveauAlerte.INFO,
+                    operation.idCarte());
+        }
+        if (alerte != null) {
+            try {
+                alerteDAO.create(alerte);
+            } catch (Exception e) {
+                throw new RuntimeException("Erreur lors de la création de l'alerte", e);
             }
         }
-        return alertes;
     }
 
-    public void genererAlerte(AlerteFraude alerte) {
-        alerteDAO.create(alerte);
+    public List<AlerteFraude> consulterAlertes(int idCarte) {
+        try {
+            return alerteDAO.getByCarte(idCarte);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public List<AlerteFraude> consulterToutesLesAlertes() {
+        try {
+            return alerteDAO.getAll();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 }

@@ -21,14 +21,14 @@ public class OperationView {
     }
 
     public void faireOperation(OperationService operationService, FraudeService fraudeService) {
-        int idCarteOp = menu.saisirEntierSecurise("ID carte : ");
+        int idCarteOp = menu.saisirEntier("ID carte : ");
         if (idCarteOp == -1) {
             System.out.println("Opération annulée - ID invalide");
             return;
         }
 
         System.out.println("Type d'opération : 1=Paiement en ligne, 2=Achat, 3=Retrait");
-        int typeOp = menu.saisirEntierSecurise("Votre choix : ");
+        int typeOp = menu.saisirEntier("Votre choix : ");
         if (typeOp == -1) {
             System.out.println("Opération annulée - Type invalide");
             return;
@@ -48,7 +48,7 @@ public class OperationView {
                 System.out.println("Type d'opération invalide.");
                 return;
         }
-        double montant = menu.saisirDoubleSecurise("Montant : ");
+        double montant = menu.saisirDouble("Montant : ");
         if (montant == -1.0) {
             System.out.println(" Opération annulée - Montant invalide");
             return;

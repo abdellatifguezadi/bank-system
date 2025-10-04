@@ -16,7 +16,8 @@ public class MenuUI {
         System.out.println("4. Consulter l’historique d’une carte");
         System.out.println("5. Lancer une analyse des fraudes");
         System.out.println("6. Bloquer/Suspendre une carte");
-        System.out.println("7. supprimer client");
+        System.out.println("7. Supprimer client");
+        System.out.println("8. Exporter vers Excel");
         System.out.println("0. Quitter");
         System.out.print("Choix : ");
     }
@@ -26,20 +27,20 @@ public class MenuUI {
             return scanner.nextInt();
         } catch (Exception e) {
             scanner.nextLine();
-            System.out.println("Erreur : Veuillez entrer un nombre valide (0-7)");
+            System.out.println("Erreur : Veuillez entrer un nombre valide (0-8)");
             return -1;
         }
     }
 
     public int saisirIdCarte() {
-        return saisirEntierSecurise("ID carte : ");
+        return saisirEntier("ID carte : ");
     }
 
-    public int saisirEntierSecurise(String message) {
+    public int saisirEntier(String message) {
         System.out.print(message);
         try {
             int valeur = scanner.nextInt();
-            scanner.nextLine();
+           scanner.nextLine();
             return valeur;
         } catch (Exception e) {
             scanner.nextLine();
@@ -48,7 +49,7 @@ public class MenuUI {
         }
     }
 
-    public double saisirDoubleSecurise(String message) {
+    public double saisirDouble(String message) {
         System.out.print(message);
         try {
             double valeur = Double.parseDouble(scanner.nextLine());

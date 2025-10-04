@@ -43,7 +43,7 @@ public class ClientView {
 
     public void deleteClient() {
         try {
-            int id = menu.saisirEntierSecurise("Entrer l'ID du client à supprimer: ");
+            int id = menu.saisirEntier("Entrer l'ID du client à supprimer: ");
 
             if (id == -1) {
                 System.out.println("Opération annulée - ID invalide");

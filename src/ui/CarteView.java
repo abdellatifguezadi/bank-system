@@ -29,7 +29,7 @@ public class CarteView {
             int type;
             do {
                 System.out.println("Type (1=Débit, 2=Crédit, 3=Prépayée, 0=Retour menu) :");
-                type = menu.saisirEntierSecurise("Votre choix : ");
+                type = menu.saisirEntier("Votre choix : ");
                 if (type == -1) {
                     System.out.println(" Opération annulée - Type invalide");
                     return;
@@ -41,7 +41,7 @@ public class CarteView {
                 }
             } while (type < 1 || type > 3);
 
-            int idCarte = menu.saisirEntierSecurise("ID carte : ");
+            int idCarte = menu.saisirEntier("ID carte : ");
             if (idCarte == -1) {
                 System.out.println(" Opération annulée - ID carte invalide");
                 return;
@@ -50,7 +50,7 @@ public class CarteView {
             String numero = genererNumeroCarte();
             LocalDate dateExpiration = LocalDate.now().plusYears(10);
 
-            int idClient = menu.saisirEntierSecurise("ID client : ");
+            int idClient = menu.saisirEntier("ID client : ");
             if (idClient == -1) {
                 System.out.println(" Opération annulée - ID client invalide");
                 return;
@@ -58,7 +58,7 @@ public class CarteView {
 
             Carte carte = null;
             if (type == 1) {
-                double plafondJournalier = menu.saisirDoubleSecurise("Plafond journalier : ");
+                double plafondJournalier = menu.saisirDouble("Plafond journalier : ");
                 if (plafondJournalier == -1.0) {
                     System.out.println(" Opération annulée - Plafond invalide");
                     return;
@@ -71,12 +71,12 @@ public class CarteView {
                 debit.setPlafondJournalier(plafondJournalier);
                 carte = debit;
             } else if (type == 2) {
-                double plafondMensuel = menu.saisirDoubleSecurise("Plafond mensuel : ");
+                double plafondMensuel = menu.saisirDouble("Plafond mensuel : ");
                 if (plafondMensuel == -1.0) {
                     System.out.println(" Opération annulée - Plafond invalide");
                     return;
                 }
-                double tauxInteret = menu.saisirDoubleSecurise("Taux d'intérêt : ");
+                double tauxInteret = menu.saisirDouble("Taux d'intérêt : ");
                 if (tauxInteret == -1.0) {
                     System.out.println(" Opération annulée - Taux invalide");
                     return;
@@ -90,7 +90,7 @@ public class CarteView {
                 credit.setTeauxInteret(tauxInteret);
                 carte = credit;
             } else if (type == 3) {
-                double soldeDisponible = menu.saisirDoubleSecurise("Solde disponible : ");
+                double soldeDisponible = menu.saisirDouble("Solde disponible : ");
                 if (soldeDisponible == -1.0) {
                     System.out.println(" Opération annulée - Solde invalide");
                     return;

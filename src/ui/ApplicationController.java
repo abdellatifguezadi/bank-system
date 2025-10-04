@@ -10,6 +10,7 @@ import service.CarteService;
 import service.ClientService;
 import service.FraudeService;
 import service.OperationService;
+import util.ExportExcel;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,8 +35,6 @@ public class ApplicationController {
         this.carteView = new CarteView(carteService, menu);
         this.operationView = new OperationView(carteService, menu);
     }
-
-
 
     public void demarrerApplication() {
         boolean running = true;
@@ -64,12 +63,15 @@ public class ApplicationController {
                 case 7:
                     clientView.deleteClient();
                     break;
+                case 8:
+                    exporterVersExcel();
+                    break;
                 case 0:
                     running = false;
                     System.out.println("Au revoir !");
                     break;
                 default:
-                    System.out.println("###########################################");
+                    System.out.println("❌ Choix invalide ! Veuillez choisir un nombre entre 0 et 8.");
             }
         }
     }
@@ -135,5 +137,11 @@ public class ApplicationController {
         } catch (NoSuchElementException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void exporterVersExcel() {
+        System.out.println("🔄 Export des données vers Excel en cours...");
+        ExportExcel export = new ExportExcel();
+        export.exporterVersExcel();
     }
 }

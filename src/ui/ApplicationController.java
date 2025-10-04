@@ -30,10 +30,12 @@ public class ApplicationController {
         this.carteService = new CarteService(new CarteDAO());
         this.operationService = new OperationService(new OperationDAO());
         this.fraudeService = new FraudeService(new AlerteDAO());
-        this.clientView = new ClientView(clientService);
-        this.carteView = new CarteView(carteService);
-        this.operationView = new OperationView(carteService);
+        this.clientView = new ClientView(clientService, carteService, menu);
+        this.carteView = new CarteView(carteService, menu);
+        this.operationView = new OperationView(carteService, menu);
     }
+
+
 
     public void demarrerApplication() {
         boolean running = true;
@@ -59,12 +61,15 @@ public class ApplicationController {
                 case 6:
                     gererStatutCarte();
                     break;
+                case 7:
+                    clientView.deleteClient();
+                    break;
                 case 0:
                     running = false;
                     System.out.println("Au revoir !");
                     break;
                 default:
-                    System.out.println("Choix invalide.");
+                    System.out.println("###########################################");
             }
         }
     }

@@ -16,19 +16,46 @@ public class MenuUI {
         System.out.println("4. Consulter l’historique d’une carte");
         System.out.println("5. Lancer une analyse des fraudes");
         System.out.println("6. Bloquer/Suspendre une carte");
+        System.out.println("7. supprimer client");
         System.out.println("0. Quitter");
         System.out.print("Choix : ");
     }
 
     public int lireChoix() {
-        return scanner.nextInt();
+        try {
+            return scanner.nextInt();
+        } catch (Exception e) {
+            scanner.nextLine();
+            System.out.println("Erreur : Veuillez entrer un nombre valide (0-7)");
+            return -1;
+        }
     }
 
-
     public int saisirIdCarte() {
-        System.out.print("ID carte : ");
-        int idCarte = scanner.nextInt();
-        scanner.nextLine();
-        return idCarte;
+        return saisirEntierSecurise("ID carte : ");
+    }
+
+    public int saisirEntierSecurise(String message) {
+        System.out.print(message);
+        try {
+            int valeur = scanner.nextInt();
+            scanner.nextLine();
+            return valeur;
+        } catch (Exception e) {
+            scanner.nextLine();
+            System.out.println("Erreur : Veuillez entrer un nombre entier valide");
+            return -1;
+        }
+    }
+
+    public double saisirDoubleSecurise(String message) {
+        System.out.print(message);
+        try {
+            double valeur = Double.parseDouble(scanner.nextLine());
+            return valeur;
+        } catch (Exception e) {
+            System.out.println("Erreur : Veuillez entrer un nombre décimal valide");
+            return -1.0;
+        }
     }
 }

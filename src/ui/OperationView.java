@@ -12,19 +12,27 @@ import java.util.Scanner;
 public class OperationView {
     private final CarteService carteService;
     private final Scanner scanner;
+    private final MenuUI menu;
 
-    public OperationView(CarteService carteService) {
+    public OperationView(CarteService carteService, MenuUI menu) {
         this.carteService = carteService;
         this.scanner = new Scanner(System.in);
+        this.menu = menu;
     }
 
     public void faireOperation(OperationService operationService, FraudeService fraudeService) {
-        System.out.print("ID carte : ");
-        int idCarteOp = scanner.nextInt();
-        scanner.nextLine();
+        int idCarteOp = menu.saisirEntierSecurise("ID carte : ");
+        if (idCarteOp == -1) {
+            System.out.println("Opération annulée - ID invalide");
+            return;
+        }
+
         System.out.println("Type d'opération : 1=Paiement en ligne, 2=Achat, 3=Retrait");
-        int typeOp = scanner.nextInt();
-        scanner.nextLine();
+        int typeOp = menu.saisirEntierSecurise("Votre choix : ");
+        if (typeOp == -1) {
+            System.out.println("Opération annulée - Type invalide");
+            return;
+        }
         TypeOperation typeOperation;
         switch (typeOp) {
             case 1:
@@ -40,9 +48,11 @@ public class OperationView {
                 System.out.println("Type d'opération invalide.");
                 return;
         }
-        System.out.print("Montant : ");
-        double montant = scanner.nextDouble();
-        scanner.nextLine();
+        double montant = menu.saisirDoubleSecurise("Montant : ");
+        if (montant == -1.0) {
+            System.out.println(" Opération annulée - Montant invalide");
+            return;
+        }
 
         String msgValidation = carteService.validerOperation(idCarteOp, montant);
         if (msgValidation != null) {

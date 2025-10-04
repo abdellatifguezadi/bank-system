@@ -8,17 +8,18 @@ import java.util.Scanner;
 public class CarteView {
     private final CarteService carteService;
     private final Scanner scanner;
+    private final MenuUI menu;
 
-    public CarteView(CarteService carteService) {
+    public CarteView(CarteService carteService, MenuUI menu) {
         this.carteService = carteService;
         this.scanner = new Scanner(System.in);
+        this.menu = menu;
     }
 
     private String genererNumeroCarte() {
-        // Génère un numéro de carte unique de 16 chiffres
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 16; i++) {
-            sb.append((int)(Math.random() * 10));
+            sb.append((int) (Math.random() * 10));
         }
         return sb.toString();
     }
@@ -28,25 +29,40 @@ public class CarteView {
             int type;
             do {
                 System.out.println("Type (1=Débit, 2=Crédit, 3=Prépayée, 0=Retour menu) :");
-                type = Integer.parseInt(scanner.nextLine());
-                if (type == 0) return;
+                type = menu.saisirEntierSecurise("Votre choix : ");
+                if (type == -1) {
+                    System.out.println(" Opération annulée - Type invalide");
+                    return;
+                }
+                if (type == 0)
+                    return;
                 if (type < 1 || type > 3) {
                     System.out.println("Type invalide ! Veuillez entrer 1, 2, 3 ou 0 pour revenir au menu.");
                 }
             } while (type < 1 || type > 3);
 
-            System.out.println("ID carte :");
-            int idCarte = Integer.parseInt(scanner.nextLine());
+            int idCarte = menu.saisirEntierSecurise("ID carte : ");
+            if (idCarte == -1) {
+                System.out.println(" Opération annulée - ID carte invalide");
+                return;
+            }
+
             String numero = genererNumeroCarte();
-            System.out.println("Date d'expiration (yyyy-mm-dd) :");
-            LocalDate dateExpiration = LocalDate.parse(scanner.nextLine());
-            System.out.println("ID client :");
-            int idClient = Integer.parseInt(scanner.nextLine());
+            LocalDate dateExpiration = LocalDate.now().plusYears(10);
+
+            int idClient = menu.saisirEntierSecurise("ID client : ");
+            if (idClient == -1) {
+                System.out.println(" Opération annulée - ID client invalide");
+                return;
+            }
 
             Carte carte = null;
             if (type == 1) {
-                System.out.println("Plafond journalier :");
-                double plafondJournalier = Double.parseDouble(scanner.nextLine());
+                double plafondJournalier = menu.saisirDoubleSecurise("Plafond journalier : ");
+                if (plafondJournalier == -1.0) {
+                    System.out.println(" Opération annulée - Plafond invalide");
+                    return;
+                }
                 CarteDebit debit = new CarteDebit();
                 debit.setId(idCarte);
                 debit.setNumero(numero);
@@ -55,10 +71,16 @@ public class CarteView {
                 debit.setPlafondJournalier(plafondJournalier);
                 carte = debit;
             } else if (type == 2) {
-                System.out.println("Plafond mensuel :");
-                double plafondMensuel = Double.parseDouble(scanner.nextLine());
-                System.out.println("Taux d'intérêt :");
-                double tauxInteret = Double.parseDouble(scanner.nextLine());
+                double plafondMensuel = menu.saisirDoubleSecurise("Plafond mensuel : ");
+                if (plafondMensuel == -1.0) {
+                    System.out.println(" Opération annulée - Plafond invalide");
+                    return;
+                }
+                double tauxInteret = menu.saisirDoubleSecurise("Taux d'intérêt : ");
+                if (tauxInteret == -1.0) {
+                    System.out.println(" Opération annulée - Taux invalide");
+                    return;
+                }
                 CarteCredit credit = new CarteCredit();
                 credit.setId(idCarte);
                 credit.setNumero(numero);
@@ -68,8 +90,11 @@ public class CarteView {
                 credit.setTeauxInteret(tauxInteret);
                 carte = credit;
             } else if (type == 3) {
-                System.out.println("Solde disponible :");
-                double soldeDisponible = Double.parseDouble(scanner.nextLine());
+                double soldeDisponible = menu.saisirDoubleSecurise("Solde disponible : ");
+                if (soldeDisponible == -1.0) {
+                    System.out.println(" Opération annulée - Solde invalide");
+                    return;
+                }
                 CartePrepayee prepayee = new CartePrepayee();
                 prepayee.setId(idCarte);
                 prepayee.setNumero(numero);

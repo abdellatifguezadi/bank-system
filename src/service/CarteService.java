@@ -51,22 +51,13 @@ public class CarteService {
         }
     }
 
-    public Carte rechercherParId(int idCarte) {
-        Carte carte = carteDAO.readCarte(idCarte);
-        if (carte != null) {
-            return carte;
-        } else {
-            throw new NoSuchElementException("Carte introuvable !");
-        }
-    }
+
 
     public List<Carte> listerCartesParClient(int idClient) {
         return carteDAO.getByClient(idClient);
     }
 
-    public List<Carte> listerToutesLesCartes() {
-        return carteDAO.getAll();
-    }
+
 
     public String obtenirStatutCarte(int idCarte) {
         Carte carte = carteDAO.readCarte(idCarte);

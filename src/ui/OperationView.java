@@ -21,13 +21,13 @@ public class OperationView {
     }
 
     public void faireOperation(OperationService operationService, FraudeService fraudeService) {
-        int idCarteOp = menu.saisirEntier("ID carte : ");
-        if (idCarteOp == -1) {
+        int idCarte = menu.saisirEntier("ID carte : ");
+        if (idCarte == -1) {
             System.out.println("Opération annulée - ID invalide");
             return;
         }
 
-        System.out.println("Type d'opération : 1=Paiement en ligne, 2=Achat, 3=Retrait");
+        System.out.println("Type d'opération : 1=Achat, 2=Retrait, 3=Paiement en ligne");
         int typeOp = menu.saisirEntier("Votre choix : ");
         if (typeOp == -1) {
             System.out.println("Opération annulée - Type invalide");
@@ -36,13 +36,13 @@ public class OperationView {
         TypeOperation typeOperation;
         switch (typeOp) {
             case 1:
-                typeOperation = TypeOperation.PAIEMENTENLIGNE;
-                break;
-            case 2:
                 typeOperation = TypeOperation.ACHAT;
                 break;
-            case 3:
+            case 2:
                 typeOperation = TypeOperation.RETRAIT;
+                break;
+            case 3:
+                typeOperation = TypeOperation.PAIEMENTENLIGNE;
                 break;
             default:
                 System.out.println("Type d'opération invalide.");
@@ -54,15 +54,15 @@ public class OperationView {
             return;
         }
 
-        String msgValidation = carteService.validerOperation(idCarteOp, montant);
+        String msgValidation = carteService.validerOperation(idCarte, montant);
         if (msgValidation != null) {
             System.out.println(msgValidation);
             return;
         }
-        LocalDateTime dateOp = LocalDateTime.now();
+        LocalDateTime date = LocalDateTime.now();
         System.out.print("Lieu de l'opération : ");
         String lieu = scanner.nextLine();
-        OperationCarte operation = new OperationCarte(0, dateOp, montant, typeOperation, lieu, idCarteOp);
+        OperationCarte operation = new OperationCarte(0, date, montant, typeOperation, lieu, idCarte);
         operationService.enregistrerOperation(operation);
         System.out.println(" Opération enregistrée avec succès.");
 

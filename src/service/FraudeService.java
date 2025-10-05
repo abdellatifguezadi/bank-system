@@ -42,13 +42,7 @@ public class FraudeService {
         }
     }
 
-    public List<AlerteFraude> consulterAlertes(int idCarte) {
-        try {
-            return alerteDAO.getByCarte(idCarte);
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-    }
+
 
     public List<AlerteFraude> consulterToutesLesAlertes() {
         try {

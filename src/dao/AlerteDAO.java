@@ -11,9 +11,9 @@ public class AlerteDAO {
     public void create(AlerteFraude alerte) {
         try (Connection conn = MyJDBC.getConnection();
                 PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO AlerteFraude (description, niveau, idCarte) VALUES (?, ?, ?)");) {
+                        "INSERT INTO AlerteFraude (description, niveauAlerte, idCarte) VALUES (?, ?, ?)");) {
             ps.setString(1, alerte.description());
-            ps.setString(2, alerte.niveau().name());
+            ps.setString(2, alerte.niveauAlerte().name());
             ps.setInt(3, alerte.idCarte());
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -21,26 +21,7 @@ public class AlerteDAO {
         }
     }
 
- 
 
-    public List<AlerteFraude> getByCarte(int idCarte) {
-        List<AlerteFraude> alertes = new ArrayList<>();
-        try (Connection conn = MyJDBC.getConnection();
-                PreparedStatement ps = conn.prepareStatement("SELECT * FROM AlerteFraude WHERE idCarte=?");) {
-            ps.setInt(1, idCarte);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                alertes.add(new AlerteFraude(
-                        rs.getInt("id"),
-                        rs.getString("description"),
-                        NiveauAlerte.valueOf(rs.getString("niveau")),
-                        rs.getInt("idCarte")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return alertes;
-    }
 
     public List<AlerteFraude> getAll() {
         List<AlerteFraude> alertes = new ArrayList<>();
@@ -51,7 +32,7 @@ public class AlerteDAO {
                 alertes.add(new AlerteFraude(
                         rs.getInt("id"),
                         rs.getString("description"),
-                        NiveauAlerte.valueOf(rs.getString("niveau")),
+                        NiveauAlerte.valueOf(rs.getString("niveauAlerte")),
                         rs.getInt("idCarte")));
             }
         } catch (SQLException e) {

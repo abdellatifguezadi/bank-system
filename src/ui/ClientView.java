@@ -24,17 +24,17 @@ public class ClientView {
 
         Scanner scanner = new Scanner(System.in);
         try {
-            System.out.println("Entrer l'ID du client:");
-            int id = Integer.parseInt(scanner.nextLine());
             System.out.println("Entrer le nom du client:");
             String nom = scanner.nextLine();
             System.out.println("Entrer l'email du client:");
             String email = scanner.nextLine();
             System.out.println("Entrer le téléphone du client:");
             String telephone = scanner.nextLine();
-            Client client = new Client(id, nom, email, telephone);
-            clientService.createClient(client);
-            System.out.println("Client ajouté avec succès !");
+            Client client = new Client(0, nom, email, telephone);
+            boolean success = clientService.createClient(client);
+            if (success) {
+                System.out.println("Client ajouté avec succès !");
+            }
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }

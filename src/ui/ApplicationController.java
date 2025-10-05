@@ -71,14 +71,24 @@ public class ApplicationController {
                     System.out.println("Au revoir !");
                     break;
                 default:
-                    System.out.println("❌ Choix invalide ! Veuillez choisir un nombre entre 0 et 8.");
+                    System.out.println("Choix invalide ! Veuillez choisir un nombre entre 0 et 8.");
             }
         }
     }
 
     private void afficherHistoriqueOperations() {
         int idCarteHistorique = menu.saisirIdCarte();
+        try {
+            carteService.obtenirStatutCarte(idCarteHistorique);
+        } catch (NoSuchElementException e) {
+            System.out.println("Aucune carte trouvée avec cet identifiant.");
+            return;
+        }
         List<OperationCarte> historique = operationService.rechercherParCarte(idCarteHistorique);
+        if(historique.isEmpty()) {
+            System.out.println("Aucune opération trouvée pour la carte " + idCarteHistorique);
+            return;
+        }
         System.out.println("Historique des opérations pour la carte " + idCarteHistorique + ":");
         for (OperationCarte operation : historique) {
             System.out.println(operation);
@@ -97,7 +107,7 @@ public class ApplicationController {
             System.out.println("----------------------------------------");
             for (AlerteFraude alerte : alertes) {
                 System.out.println("Carte " + alerte.idCarte() + " - " +
-                        alerte.niveau() + ": " + alerte.description());
+                        alerte.niveauAlerte() + ": " + alerte.description());
             }
         }
     }
@@ -140,7 +150,7 @@ public class ApplicationController {
     }
 
     private void exporterVersExcel() {
-        System.out.println("🔄 Export des données vers Excel en cours...");
+        System.out.println("Export des données vers Excel en cours...");
         ExportExcel export = new ExportExcel();
         export.exporterVersExcel();
     }

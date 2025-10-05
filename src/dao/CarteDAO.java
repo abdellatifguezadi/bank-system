@@ -14,40 +14,34 @@ public class CarteDAO {
             return;
         }
         try (Connection conn = MyJDBC.getConnection();
-                PreparedStatement check = conn.prepareStatement("SELECT id FROM Carte WHERE id=?");
                 PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO Carte (id, numero, dateExpiration, statut, typeCarte, idClient, plafondJournalier, plafondMensuel, tauxInteret, soldeDisponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
-            check.setInt(1, carte.getId());
-            ResultSet rs = check.executeQuery();
-            if (rs.next()) {
-                throw new SQLException("Erreur : carte déjà existante !");
-            }
-            ps.setInt(1, carte.getId());
-            ps.setString(2, carte.getNumero());
-            ps.setDate(3, Date.valueOf(carte.getDateExpiration()));
-            ps.setString(4, carte.getStatut().name());
-            ps.setString(5, carte.getClass().getSimpleName());
-            ps.setInt(6, carte.getIdClient());
+                        "INSERT INTO Carte (numero, dateExpiration, statut, typeCarte, idClient, plafondJournalier, plafondMensuel, tauxInteret, soldeDisponible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
+
+            ps.setString(1, carte.getNumero());
+            ps.setDate(2, Date.valueOf(carte.getDateExpiration()));
+            ps.setString(3, carte.getStatut().name());
+            ps.setString(4, carte.getClass().getSimpleName());
+            ps.setInt(5, carte.getIdClient());
             if (carte instanceof CarteDebit debit) {
-                ps.setDouble(7, debit.getPlafondJournalier());
+                ps.setDouble(6, debit.getPlafondJournalier());
+                ps.setNull(7, Types.DOUBLE);
                 ps.setNull(8, Types.DOUBLE);
                 ps.setNull(9, Types.DOUBLE);
-                ps.setNull(10, Types.DOUBLE);
             } else if (carte instanceof CarteCredit credit) {
-                ps.setNull(7, Types.DOUBLE);
-                ps.setDouble(8, credit.getPlafondMensuel());
-                ps.setDouble(9, credit.getTeauxInteret());
-                ps.setNull(10, Types.DOUBLE);
+                ps.setNull(6, Types.DOUBLE);
+                ps.setDouble(7, credit.getPlafondMensuel());
+                ps.setDouble(8, credit.getTeauxInteret());
+                ps.setNull(9, Types.DOUBLE);
             } else if (carte instanceof CartePrepayee prepayee) {
+                ps.setNull(6, Types.DOUBLE);
                 ps.setNull(7, Types.DOUBLE);
                 ps.setNull(8, Types.DOUBLE);
-                ps.setNull(9, Types.DOUBLE);
-                ps.setDouble(10, prepayee.getSolde());
+                ps.setDouble(9, prepayee.getSolde());
             } else {
+                ps.setNull(6, Types.DOUBLE);
                 ps.setNull(7, Types.DOUBLE);
                 ps.setNull(8, Types.DOUBLE);
                 ps.setNull(9, Types.DOUBLE);
-                ps.setNull(10, Types.DOUBLE);
             }
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -141,18 +135,7 @@ public class CarteDAO {
         }
     }
 
-    public void delete(int id) {
-        try (Connection conn = MyJDBC.getConnection();
-                PreparedStatement ps = conn.prepareStatement("DELETE FROM Carte WHERE id=?");) {
-            ps.setInt(1, id);
-            int rows = ps.executeUpdate();
-            if (rows == 0) {
-                throw new SQLException("Erreur : carte introuvable !");
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+
 
     public List<Carte> getByClient(int idClient) {
         List<Carte> cartes = new ArrayList<>();
@@ -236,4 +219,6 @@ public class CarteDAO {
         }
         return cartes;
     }
+
+
 }

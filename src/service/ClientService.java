@@ -15,22 +15,11 @@ public class ClientService {
         this.clientDAO = clientDAO;
     }
 
-    public void createClient(Client client) {
-        clientDAO.createClient(client);
+    public boolean createClient(Client client) {
+        return clientDAO.createClient(client);
     }
 
-    public Client findClientById(int id) {
-        Client client = clientDAO.readClient(id);
-        if ((client != null)) {
-            return client;
-        } else {
-            throw new NoSuchElementException("Client introuvable");
-        }
-    }
 
-    public List<Client> listerClients() {
-        return clientDAO.getAllClients();
-    }
 
     public void deleteClient(int id) {
         clientDAO.deleteClient(id);

@@ -41,12 +41,6 @@ public class CarteView {
                 }
             } while (type < 1 || type > 3);
 
-            int idCarte = menu.saisirEntier("ID carte : ");
-            if (idCarte == -1) {
-                System.out.println(" Opération annulée - ID carte invalide");
-                return;
-            }
-
             String numero = genererNumeroCarte();
             LocalDate dateExpiration = LocalDate.now().plusYears(10);
 
@@ -64,7 +58,7 @@ public class CarteView {
                     return;
                 }
                 CarteDebit debit = new CarteDebit();
-                debit.setId(idCarte);
+                debit.setId(0);
                 debit.setNumero(numero);
                 debit.setDateExpiration(dateExpiration);
                 debit.setIdClient(idClient);
@@ -82,8 +76,7 @@ public class CarteView {
                     return;
                 }
                 CarteCredit credit = new CarteCredit();
-                credit.setId(idCarte);
-                credit.setNumero(numero);
+                credit.setId(0);
                 credit.setDateExpiration(dateExpiration);
                 credit.setIdClient(idClient);
                 credit.setPlafondMensuel(plafondMensuel);
@@ -96,7 +89,7 @@ public class CarteView {
                     return;
                 }
                 CartePrepayee prepayee = new CartePrepayee();
-                prepayee.setId(idCarte);
+                prepayee.setId(0);
                 prepayee.setNumero(numero);
                 prepayee.setDateExpiration(dateExpiration);
                 prepayee.setIdClient(idClient);

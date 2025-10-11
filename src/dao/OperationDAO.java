@@ -9,12 +9,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperationDAO {
+public class OperationDAO implements IOperationDAO {
 
     public void createOperation(OperationCarte operation) {
         try (Connection connection = MyJDBC.getConnection();
-             PreparedStatement check = connection.prepareStatement("SELECT id FROM OperationCarte WHERE id = ?");
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO OperationCarte (idCarte, montant, dateOperation, typeOperation, description) VALUES (?, ?, ?, ?, ?)");) {
+                PreparedStatement check = connection.prepareStatement("SELECT id FROM OperationCarte WHERE id = ?");
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO OperationCarte (idCarte, montant, dateOperation, typeOperation, description) VALUES (?, ?, ?, ?, ?)");) {
             check.setInt(1, operation.id());
             var resultSet = check.executeQuery();
             if (resultSet.next()) {
@@ -31,11 +32,11 @@ public class OperationDAO {
         }
     }
 
-
     public List<OperationCarte> getOperationByCarte(int idCarte) {
         List<OperationCarte> ops = new ArrayList<>();
         try (Connection connection = MyJDBC.getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM OperationCarte WHERE idCarte=?");) {
+                PreparedStatement statement = connection
+                        .prepareStatement("SELECT * FROM OperationCarte WHERE idCarte=?");) {
             statement.setInt(1, idCarte);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -45,18 +46,19 @@ public class OperationDAO {
                         resultSet.getDouble("montant"),
                         TypeOperation.valueOf(resultSet.getString("typeOperation")),
                         resultSet.getString("description"),
-                        resultSet.getInt("idCarte")
-                ));
+                        resultSet.getInt("idCarte")));
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return ops;
     }
 
     public List<OperationCarte> getAllOperation() {
         List<OperationCarte> ops = new ArrayList<>();
         try (Connection connection = MyJDBC.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM OperationCarte");) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM OperationCarte");) {
             while (resultSet.next()) {
                 ops.add(new OperationCarte(
                         resultSet.getInt("id"),
@@ -64,10 +66,11 @@ public class OperationDAO {
                         resultSet.getDouble("montant"),
                         TypeOperation.valueOf(resultSet.getString("typeOperation")),
                         resultSet.getString("description"),
-                        resultSet.getInt("idCarte")
-                ));
+                        resultSet.getInt("idCarte")));
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return ops;
     }
 }

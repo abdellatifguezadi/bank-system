@@ -7,16 +7,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientDAO {
+public class ClientDAO implements IClientDAO {
 
     public boolean createClient(Client client) {
         try (Connection connection = MyJDBC.getConnection();
                 PreparedStatement ps = connection
                         .prepareStatement("INSERT INTO Client (nom, email, telephone) VALUES (?, ?, ?)");
                 PreparedStatement check = connection.prepareStatement("SELECT * FROM Client WHERE email=?")) {
-            check.setString(1,client.email());
+            check.setString(1, client.email());
             ResultSet resultSet = check.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 System.out.println("Erreur : email déjà utilisé !");
                 return false;
             }
@@ -33,8 +33,6 @@ public class ClientDAO {
             return false;
         }
     }
-
-
 
     public void deleteClient(int id) {
         try (Connection connection = MyJDBC.getConnection();

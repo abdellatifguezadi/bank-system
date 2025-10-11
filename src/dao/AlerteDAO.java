@@ -7,7 +7,7 @@ import util.MyJDBC;
 import java.sql.*;
 import java.util.*;
 
-public class AlerteDAO {
+public class AlerteDAO implements IAlerteDAO {
     public void create(AlerteFraude alerte) {
         try (Connection conn = MyJDBC.getConnection();
                 PreparedStatement ps = conn.prepareStatement(
@@ -20,8 +20,6 @@ public class AlerteDAO {
             throw new RuntimeException("Erreur lors de la création de l'alerte: " + e.getMessage());
         }
     }
-
-
 
     public List<AlerteFraude> getAll() {
         List<AlerteFraude> alertes = new ArrayList<>();

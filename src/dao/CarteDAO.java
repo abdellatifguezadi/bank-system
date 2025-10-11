@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CarteDAO {
+public class CarteDAO implements ICarteDAO {
 
     public void createCarte(Carte carte) {
         if (carte == null) {
@@ -135,8 +135,6 @@ public class CarteDAO {
         }
     }
 
-
-
     public List<Carte> getByClient(int idClient) {
         List<Carte> cartes = new ArrayList<>();
         try (Connection conn = MyJDBC.getConnection();
@@ -219,6 +217,5 @@ public class CarteDAO {
         }
         return cartes;
     }
-
 
 }
